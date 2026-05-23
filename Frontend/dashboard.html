@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Artifacteum</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="stars"></div>
+    <div class="dashboard-layout">
+        <aside class="glass">
+            <div class="logo">ARTIFACTEUM</div>
+
+            <div class="filter-section">
+                <h3>Filters</h3>
+                <div class="filter-group">
+                    <label>Country</label>
+                    <select id="filterCountry">
+                        <option value="">All Countries</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Period</label>
+                    <select id="filterPeriod">
+                        <option value="">All Periods</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Material</label>
+                    <select id="filterMaterial">
+                        <option value="">All Materials</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Sort By</label>
+                    <select id="sortArtifacts">
+                        <option value="name_asc">Name (A-Z)</option>
+                        <option value="name_desc">Name (Z-A)</option>
+                        <option value="age_desc">Oldest First</option>
+                        <option value="age_asc">Newest First</option>
+                    </select>
+                </div>
+                <button class="btn-primary" id="applyFilters" style="padding: 10px;">APPLY FILTERS</button>
+            </div>
+
+            <div style="margin-top: auto;">
+                <p id="userInfo" style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 10px;"></p>
+                <button class="btn-primary" id="logoutBtn">LOGOUT</button>
+            </div>
+        </aside>
+
+        <main>
+            <div class="header-actions">
+                <div class="search-bar">
+                    <input type="text" id="searchBar" placeholder="Search by artifact name...">
+                </div>
+                <div id="adminActions" style="display: none; gap: 15px;">
+                    <button class="btn-primary" onclick="openModal('artifactModal')">+ ADD ARTIFACT</button>
+                    <button class="btn-primary" onclick="openModal('exhibitionModal')"
+                        style="background: var(--accent);">+ ADD EXHIBITION</button>
+                    <button class="btn-primary" onclick="openModal('museumModal')" style="background: #7c3aed;">+ ADD MUSEUM</button>
+                    <button class="btn-primary" onclick="openModal('userModal')" style="background: #4a90e2;">+ ADD
+                        USER</button>
+                    <button class="btn-primary" onclick="openModal('reviewModal')" style="background: #fbbf24; color: #000;">📋 REVIEW SUGGESTIONS</button>
+                </div>
+                <div id="viewerActions" style="display: none; gap: 15px;">
+                    <button class="btn-primary" onclick="openModal('suggestionModal')" style="background: var(--accent);">💡 SUGGEST NEW</button>
+                </div>
+                <button id="themeToggle" class="theme-toggle" title="Toggle Theme">🌓</button>
+            </div>
+
+            <section>
+                <h2 style="margin: 25px; letter-spacing: 1px;">CURATED COLLECTION</h2>
+                <div class="artifact-grid" id="artifactGrid">
+                    <!-- Artifacts will be loaded here -->
+                </div>
+            </section>
+
+            <section class="exhibition-list" id="exhibitionSection">
+                <h2 style="margin: 25px; letter-spacing: 1px;">ACTIVE EXHIBITIONS</h2>
+                <div id="exhibitionGrid" class="artifact-grid">
+                    <!-- Exhibitions will be loaded here -->
+                </div>
+            </section>
+
+            <section id="museumSection">
+                <h2 style="margin: 25px; letter-spacing: 1px;">MUSEUMS</h2>
+                <div id="museumGrid" class="artifact-grid">
+                    <!-- Museums will be loaded here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="toastContainer" class="toast-container"></div>
+    <div id="spinner"><span class="loader"></span></div>
+
+    <!-- Artifact Modal (Used for both Add and Edit) -->
+    <div id="artifactModal" class="modal">
+        <div class="modal-content glass fade-in">
+            <div class="modal-header">
+                <h2 id="artifactModalTitle">Add Artifact</h2>
+                <span class="close-btn" onclick="closeModal('artifactModal')">&times;</span>
+            </div>
+            <form id="artifactForm">
+                <input type="hidden" id="editArtifactId" name="id">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Age (years)</label>
+                        <input type="number" name="age" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Country</label>
+                        <select name="country_id" id="formCountry" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Period</label>
+                        <select name="period_id" id="formPeriod" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Museum</label>
+                        <select name="museum_id" id="formMuseum" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Materials (comma separated)</label>
+                        <input type="text" name="materials" placeholder="Gold, Ivory, Stone">
+                    </div>
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>Description</label>
+                        <textarea name="description" placeholder="Brief history or description..."></textarea>
+                    </div>
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>Image</label>
+                        <input type="file" name="image" id="artifactImageInput">
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" style="margin-top: 20px;">SAVE ARTIFACT</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Exhibition Modal -->
+    <div id="exhibitionModal" class="modal">
+        <div class="modal-content glass fade-in">
+            <div class="modal-header">
+                <h2>Create Exhibition</h2>
+                <span class="close-btn" onclick="closeModal('exhibitionModal')">&times;</span>
+            </div>
+            <form id="exhibitionForm">
+                <div class="form-grid">
+                    <div class="input-group full-width">
+                        <label>Exhibition Name</label>
+                        <input type="text" name="name" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Start Date</label>
+                        <input type="date" name="start_date" required>
+                    </div>
+                    <div class="input-group">
+                        <label>End Date</label>
+                        <input type="date" name="end_date" required>
+                    </div>
+                    <div class="input-group full-width">
+                        <label>Museum Conducting</label>
+                        <select name="museum_id" id="exMuseum" required></select>
+                    </div>
+                    <div class="input-group full-width">
+                        <label>Select Artifacts (Hold Ctrl to select multiple)</label>
+                        <select name="artifact_ids" id="exArtifacts" multiple style="height: 100px;"></select>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" style="margin-top: 20px;">CREATE EXHIBITION</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add User Modal -->
+    <div id="userModal" class="modal">
+        <div class="modal-content glass fade-in" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2>Create New User</h2>
+                <span class="close-btn" onclick="closeModal('userModal')">&times;</span>
+            </div>
+            <form id="userForm">
+                <div class="input-group">
+                    <label>Username</label>
+                    <input type="text" name="username" required>
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" name="password" required>
+                </div>
+                <div class="input-group">
+                    <label>Role</label>
+                    <select name="role" required>
+                        <option value="viewer">Viewer</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary" style="margin-top: 20px;">CREATE USER</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Artifact Detail Modal -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content glass fade-in" style="max-width: 950px;">
+            <div class="modal-header">
+                <h2 id="detailTitle">Artifact Details</h2>
+                <span class="close-btn" onclick="closeModal('detailModal')">&times;</span>
+            </div>
+            <div id="detailBody"
+                style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: start;">
+                <!-- Content will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Exhibition Detail Modal -->
+    <div id="exhibitionDetailModal" class="modal">
+        <div class="modal-content glass fade-in">
+            <div class="modal-header">
+                <h2 id="exDetailTitle">Exhibition Name</h2>
+                <span class="close-btn" onclick="closeModal('exhibitionDetailModal')">&times;</span>
+            </div>
+            <div id="exDetailBody" style="display: grid; gap: 20px;">
+                <!-- Content injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+
+    <!-- Add / Edit Museum Modal (Admin only) -->
+    <div id="museumModal" class="modal">
+        <div class="modal-content glass fade-in" style="max-width: 520px;">
+            <div class="modal-header">
+                <h2 id="museumModalTitle">Add Museum</h2>
+                <span class="close-btn" onclick="closeModal('museumModal')">&times;</span>
+            </div>
+            <form id="museumForm">
+                <input type="hidden" id="editMuseumId" name="id">
+                <div class="form-grid">
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>Museum Name</label>
+                        <input type="text" name="name" required placeholder="e.g. British Museum">
+                    </div>
+                    <div class="form-group">
+                        <label>City</label>
+                        <input type="text" name="city" placeholder="London">
+                    </div>
+                    <div class="form-group">
+                        <label>State / Region</label>
+                        <input type="text" name="state" placeholder="England">
+                    </div>
+                    <div class="form-group">
+                        <label>Year Established</label>
+                        <input type="number" name="year_established" placeholder="1753">
+                    </div>
+                    <div class="form-group">
+                        <label>Country</label>
+                        <select name="country_id" id="museumFormCountry"></select>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" style="margin-top: 20px;">SAVE MUSEUM</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Museum Detail Modal (All roles) -->
+    <div id="museumDetailModal" class="modal">
+        <div class="modal-content glass fade-in" style="max-width: 850px;">
+            <div class="modal-header">
+                <h2 id="museumDetailTitle">Museum</h2>
+                <span class="close-btn" onclick="closeModal('museumDetailModal')">&times;</span>
+            </div>
+            <div id="museumDetailBody" style="display: grid; gap: 20px;">
+                <!-- Injected by JS -->
+            </div>
+        </div>
+    </div>
+    <!-- Suggestion Modal -->
+    <div id="suggestionModal" class="modal">
+        <div class="modal-content glass fade-in" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2>Suggest Something New</h2>
+                <span class="close-btn" onclick="closeModal('suggestionModal')">&times;</span>
+            </div>
+            <p style="margin-bottom: 20px; color: var(--text-muted);">Suggest an artifact or exhibition you'd like to see in our collection.</p>
+            <form id="suggestionForm">
+                <div class="form-group">
+                    <label>Suggestion Type</label>
+                    <select name="type" required>
+                        <option value="artifact">Artifact</option>
+                        <option value="exhibition">Exhibition</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Title / Name</label>
+                    <input type="text" name="title" required placeholder="e.g. The Rosetta Stone">
+                </div>
+                <div class="form-group">
+                    <label>Museum (Optional)</label>
+                    <select name="museum_id" id="suggestionMuseum"></select>
+                </div>
+                <div class="form-group">
+                    <label>Description / Reason</label>
+                    <textarea name="description" placeholder="Why should we add this? Provide any known details." style="height: 100px;"></textarea>
+                </div>
+                <button type="submit" class="btn-primary" style="margin-top: 20px; width: 100%;">SUBMIT SUGGESTION</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Review Suggestions Modal (Admin) -->
+    <div id="reviewModal" class="modal">
+        <div class="modal-content glass fade-in" style="max-width: 900px; width: 90%;">
+            <div class="modal-header">
+                <h2>Review Suggestions</h2>
+                <span class="close-btn" onclick="closeModal('reviewModal')">&times;</span>
+            </div>
+            <div id="suggestionsList" class="suggestions-container" style="max-height: 60vh; overflow-y: auto; margin-top: 20px;">
+                <!-- Suggestions will be loaded here -->
+                <p style="text-align: center; color: var(--text-muted);">Loading suggestions...</p>
+            </div>
+        </div>
+    </div>
+    <!-- Exhibition Feedback Modal -->
+    <div id="feedbackModal" class="modal">
+        <div class="modal-content glass fade-in" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2>Give Exhibition Feedback</h2>
+                <span class="close-btn" onclick="closeModal('feedbackModal')">&times;</span>
+            </div>
+            <p id="feedbackExhibitionName" style="color: var(--accent); margin-bottom: 20px; font-weight: bold;"></p>
+            <form id="feedbackForm">
+                <input type="hidden" id="feedbackExhibitionId" name="exhibition_id">
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label>Rating</label>
+                    <select name="rating" required style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text-color); border-radius: 6px;">
+                        <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
+                        <option value="4">⭐⭐⭐⭐ (4/5)</option>
+                        <option value="3">⭐⭐⭐ (3/5)</option>
+                        <option value="2">⭐⭐ (2/5)</option>
+                        <option value="1">⭐ (1/5)</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label>Visited Date</label>
+                    <input type="date" name="visited_date" required style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text-color); border-radius: 6px;">
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label>Comments / Review</label>
+                    <textarea name="comments" placeholder="How was your experience at the exhibition?" style="height: 100px; width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text-color); border-radius: 6px;"></textarea>
+                </div>
+                <button type="submit" class="btn-primary" style="margin-top: 20px; width: 100%;">SUBMIT FEEDBACK</button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Museum — Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #c9a84c;
+      --gold-light: #e8d08a;
+      --dark: #0e0c0a;
+      --panel: #1a1713;
+      --border: #3a3020;
+      --text: #e8e0d0;
+      --muted: #8a7e6a;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Lato', sans-serif;
+      overflow: hidden;
+    }
+
+    /* Animated background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 50%, rgba(201,168,76,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 80% 50%, rgba(201,168,76,0.04) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .grid-overlay {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+
+    .login-card {
+      position: relative;
+      width: 420px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 56px 48px;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    .login-card::before, .login-card::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-color: var(--gold);
+      border-style: solid;
+    }
+    .login-card::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+    .login-card::after  { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+    .emblem {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .emblem svg {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 36px;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .divider span {
+      color: var(--gold);
+      font-size: 16px;
+    }
+
+    .field {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: 100%;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 16px;
+      font-family: 'Lato', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus {
+      border-color: var(--gold);
+      background: rgba(201,168,76,0.04);
+    }
+
+    input::placeholder { color: var(--muted); }
+
+    .btn-login {
+      width: 100%;
+      margin-top: 12px;
+      padding: 14px;
+      background: var(--gold);
+      color: var(--dark);
+      border: none;
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn-login:hover { background: var(--gold-light); }
+    .btn-login:active { transform: scale(0.98); }
+
+    .error-msg {
+      color: #e07070;
+      font-size: 12px;
+      text-align: center;
+      margin-top: 14px;
+      min-height: 18px;
+      letter-spacing: 0.5px;
+    }
+
+    .hint {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 1px;
+    }
+
+    .hint span { color: var(--gold); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-overlay"></div>
+
+  <div class="login-card">
+    <div class="emblem">
+      <!-- Museum column SVG emblem -->
+      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="4" y="38" width="40" height="3" fill="#c9a84c"/>
+        <rect x="2" y="10" width="44" height="3" fill="#c9a84c"/>
+        <rect x="10" y="13" width="4" height="25" fill="#c9a84c" opacity="0.8"/>
+        <rect x="22" y="13" width="4" height="25" fill="#c9a84c" opacity="0.8"/>
+        <rect x="34" y="13" width="4" height="25" fill="#c9a84c" opacity="0.8"/>
+        <polygon points="24,2 2,10 46,10" fill="#c9a84c"/>
+      </svg>
+      <h1>Artefactum</h1>
+      <p class="subtitle">Museum Archive System</p>
+    </div>
+
+    <div class="divider"><span>✦</span></div>
+
+    <div class="field">
+      <label>Username</label>
+      <input type="text" id="username" placeholder="Enter your name" autocomplete="off"/>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="password" placeholder="••••••••"/>
+    </div>
+
+    <button class="btn-login" onclick="handleLogin()">Enter Archive</button>
+    <div class="error-msg" id="errorMsg"></div>
+
+    <div class="hint">
+      Admin: <span>Admin1</span> &nbsp;|&nbsp; Viewer: <span>User2</span><br>
+      Password: <span>password</span>
+    </div>
+  </div>
+
+  <script>
+    // If already logged in, redirect
+    if (localStorage.getItem('token')) {
+      window.location.href = '/dashboard.html';
+    }
+
+    document.getElementById('password').addEventListener('keydown', e => {
+      if (e.key === 'Enter') handleLogin();
+    });
+
+    async function handleLogin() {
+      const name = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const errorMsg = document.getElementById('errorMsg');
+      errorMsg.textContent = '';
+
+      if (!name || !password) {
+        errorMsg.textContent = 'Please fill in all fields.';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, password }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          errorMsg.textContent = data.error || 'Login failed.';
+          return;
+        }
+
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        window.location.href = '/dashboard.html';
+      } catch {
+        errorMsg.textContent = 'Server error. Please try again.';
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artifacteum | Login</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="stars"></div>
+    <div style="position: absolute; top: 20px; right: 20px; z-index: 1000;">
+        <button id="themeToggle" class="theme-toggle" title="Toggle Theme">🌓</button>
+    </div>
+    <div class="login-container">
+        <div class="login-card glass fade-in">
+            <h1>Artifacteum</h1>
+            <p style="color: var(--text-muted); margin-bottom: 30px;">Access the world's most prestigious collection</p>
+            
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter your username" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-primary">AUTHENTICATE</button>
+            </form>
+            
+            <div id="loginMessage" style="margin-top: 20px; font-size: 0.9rem;"></div>
+        </div>
+    </div>
+
+    <script>
+        function applyTheme() {
+            const theme = localStorage.getItem('theme') || 'dark';
+            if (theme === 'light') document.body.classList.add('light-mode');
+        }
+        applyTheme();
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            generateStars();
+        }
+
+        function generateStars() {
+            const stars = document.getElementById('stars');
+            const isLight = document.body.classList.contains('light-mode');
+            const starColor = isLight ? '#2563eb' : '#FFF';
+            let shadow = "";
+            for (let i = 0; i < 700; i++) {
+                shadow += `${Math.random() * 2000}px ${Math.random() * 2000}px ${starColor}${i < 699 ? "," : ""}`;
+            }
+            stars.style.boxShadow = shadow;
+        }
+        generateStars();
+
+        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const msg = document.getElementById('loginMessage');
+            const api_url = window.location.origin + '/api';
+
+            try {
+                const response = await fetch(api_url + '/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('role', data.role);
+                    localStorage.setItem('username', data.name);
+                    window.location.href = 'dashboard.html';
+                } else {
+                    msg.style.color = '#ff4d4d';
+                    msg.innerText = data.message;
+                }
+            } catch (err) {
+                msg.style.color = '#ff4d4d';
+                msg.innerText = 'Server connection failed';
+            }
+        });
+
+        // Check if already logged in
+        if (localStorage.getItem('token')) {
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+</html>
