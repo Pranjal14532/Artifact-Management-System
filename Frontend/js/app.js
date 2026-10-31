@@ -1,4 +1,4 @@
-const api_url = 'https://artifacteum.duckdns.org/api';
+const API_URL = 'https://artifacteum.duckdns.org/api';
 const token = localStorage.getItem('token');
 const role = localStorage.getItem('role');
 const username = localStorage.getItem('username');
