@@ -265,8 +265,10 @@
 
        localStorage.setItem('token', data.token);
 localStorage.setItem('user', JSON.stringify(data.user));
-localStorage.setItem('role', data.role);
-localStorage.setItem('username', data.name);
+localStorage.setItem('role', data.user.role);
+localStorage.setItem('username', data.user.name);
+
+window.location.href = '/dashboard.html';
 
 window.location.href = '/dashboard.html';
       } catch {
