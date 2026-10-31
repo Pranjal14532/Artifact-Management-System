@@ -4,7 +4,7 @@ const role = localStorage.getItem('role');
 const username = localStorage.getItem('username');
 let pendingSuggestionId = null;
 
-if (!token) window.location.href = 'login.html';
+if (!token) window.location.href = 'index.html';
 
 document.addEventListener('DOMContentLoaded', () => {
     const userInfo = document.getElementById('userInfo');
