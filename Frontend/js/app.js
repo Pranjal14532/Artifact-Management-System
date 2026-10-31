@@ -982,6 +982,6 @@ function attachEventListeners() {
             console.error('Logout request failed', e);
         }
         localStorage.clear();
-        window.location.href = 'index.html';
+        window.location.href = 'login.html';
     });
 }
