@@ -263,9 +263,12 @@
           return;
         }
 
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        window.location.href = '/dashboard.html';
+       localStorage.setItem('token', data.token);
+localStorage.setItem('user', JSON.stringify(data.user));
+localStorage.setItem('role', data.role);
+localStorage.setItem('username', data.name);
+
+window.location.href = '/dashboard.html';
       } catch {
         errorMsg.textContent = 'Server error. Please try again.';
       }
